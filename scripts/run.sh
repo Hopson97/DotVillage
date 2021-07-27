@@ -2,7 +2,7 @@
 
 if [ "$1" = "release" ]
 then
-    ./build/release/bin/dotvillage 
+    ./build/release/bin/DotVillage 
 else
-    ./build/debug/bin/dotvillage 
+    ./build/debug/bin/DotVillage 
 fi

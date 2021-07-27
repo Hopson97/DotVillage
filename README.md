@@ -1,4 +1,4 @@
-# dotvillage
+# DotVillage
 
 ## Building and Running
 

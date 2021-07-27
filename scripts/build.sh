@@ -19,17 +19,17 @@ target_debug() {
 # Create folder for distribution
 if [ "$1" = "release" ]
 then
-    if [ -d "$dotvillage " ]
+    if [ -d "$DotVillage " ]
     then
-        rm -rf -d dotvillage 
+        rm -rf -d DotVillage 
     fi
 
-    mkdir -p dotvillage 
+    mkdir -p DotVillage 
 fi
 
 # Creates the folder for the buildaries
-mkdir -p dotvillage
-mkdir -p dotvillage/Data
+mkdir -p DotVillage
+mkdir -p DotVillage/Data
 mkdir -p build
 mkdir -p build/release
 mkdir -p build/debug
@@ -41,9 +41,9 @@ conan install .. -s compiler.libcxx=libstdc++11 --build=missing
 if [ "$1" = "release" ]
 then
     target_release
-    cp build/release/bin/dotvillage  dotvillage/dotvillage 
+    cp build/release/bin/DotVillage  DotVillage/DotVillage 
 else
     target_debug
 fi
 
-cp -R Data dotvillage/
+cp -R Data DotVillage/
