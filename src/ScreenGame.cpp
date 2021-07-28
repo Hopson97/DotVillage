@@ -3,11 +3,12 @@
 #include <cmath>
 #include <imgui_sfml/imgui.h>
 #include <iostream>
+#include "GUI.h"
 
 ScreenGame::ScreenGame(ScreenManager* stack)
     : Screen(stack)
 {
-    m_backgroundRect.setSize({1280, 720});
+    m_backgroundRect.setSize({WIN_WIDTH, WIN_HEIGHT});
     m_backgroundTexture.loadFromFile("Data/area1.png");
     m_backgroundImage.loadFromFile("Data/area1.png");
 
@@ -38,7 +39,18 @@ void ScreenGame::onGUI()
         }
         ImGui::End();
     }
-    
+    else {
+        if (imguiGameMenuBegin("M E N U")) {
+            ImGui::Text("Resources");
+            ImGui::Text("Population: %d", m_population);
+            ImGui::Text("     Coins: %d", m_coins);
+            ImGui::Text("      Food: %d", m_food);
+            ImGui::Text("      Wood: %d", m_wood);
+            ImGui::Text("     Metal: %d", m_metal);
+            ImGui::Separator();
+        }
+        ImGui::End();
+    }
 }
 
 void ScreenGame::onUpdate(const sf::Time& dt) {}

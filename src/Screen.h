@@ -9,6 +9,9 @@ class GUI;
 
 class Screen;
 
+constexpr int WIN_WIDTH = 1600;
+constexpr int WIN_HEIGHT = 900;
+
 class ScreenManager final {
     struct Action {
         enum class Kind {
@@ -51,6 +54,3 @@ class Screen {
   protected:
     ScreenManager* m_pScreens;
 };
-
-bool imguiBeginMenu(const char* name);
-bool imguiButtonCustom(const char* text);

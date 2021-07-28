@@ -17,7 +17,11 @@ class ScreenGame final : public Screen {
     sf::Texture m_backgroundTexture;
     sf::Image m_backgroundImage;
 
-
-
     bool m_isPasued = false;
+
+    int m_population = 0;
+    int m_coins = 250;
+    int m_food = 250;
+    int m_wood = 250;
+    int m_metal = 250;
 };

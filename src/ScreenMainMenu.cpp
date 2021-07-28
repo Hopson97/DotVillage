@@ -1,4 +1,5 @@
 #include "ScreenMainMenu.h"
+#include "GUI.h"
 #include "ScreenGame.h"
 #include <imgui_sfml/imgui.h>
 
