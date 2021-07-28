@@ -1,7 +1,7 @@
 #include "GUI.h"
 
-#include <imgui_sfml/imgui.h>
 #include "Screen.h"
+#include <imgui_sfml/imgui.h>
 
 bool imguiBeginMenu(const char* name)
 {

@@ -6,7 +6,6 @@ stone 0
 metal 0
 jobs 0
 
-
 rates
 coins 5
 wood 0
@@ -20,5 +19,5 @@ population 2
 meta
 size 32 32
 name Hut
-desc 
+desc Simple housing unit for 2 people
 

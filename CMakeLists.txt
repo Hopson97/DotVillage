@@ -11,6 +11,7 @@ conan_basic_setup()
 add_executable(${PROJECT_NAME}     
     src/main.cpp
 
+	src/Game/Building.cpp
 	src/GUI.cpp
 
 	src/Animation.cpp

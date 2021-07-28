@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Game/Building.h"
 #include "Screen.h"
 
 class ScreenGame final : public Screen {
@@ -17,11 +18,18 @@ class ScreenGame final : public Screen {
     sf::Texture m_backgroundTexture;
     sf::Image m_backgroundImage;
 
+    sf::RectangleShape m_sprite;
+
+    std::vector<Building> m_buildingBlueprints;
+
     bool m_isPasued = false;
 
+    int m_coins = 100;
     int m_population = 0;
-    int m_coins = 250;
-    int m_food = 250;
-    int m_wood = 250;
-    int m_metal = 250;
+    int m_unemployed = 0;
+
+    int m_food = 100;
+    int m_wood = 100;
+    int m_stone = 100;
+    int m_metal = 100;
 };
