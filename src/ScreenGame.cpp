@@ -2,6 +2,7 @@
 #include "ScreenMainMenu.h"
 #include <cmath>
 #include <imgui_sfml/imgui.h>
+#include <iostream>
 
 ScreenGame::ScreenGame(ScreenManager* stack)
     : Screen(stack)
@@ -15,13 +16,28 @@ ScreenGame::ScreenGame(ScreenManager* stack)
     // m_recruitWalkAnimation.addFrame(0, 1, sf::milliseconds(500));
 }
 
+void ScreenGame::onEvent(const sf::Event& e)
+{
+    if (e.type == sf::Event::KeyReleased) {
+        if (e.key.code == sf::Keyboard::Escape) {
+            m_isPasued = !m_isPasued;
+        }
+    }
+}
+
 void ScreenGame::onGUI()
 {
-    ImGui::Begin("Menu");
-    if (ImGui::Button("Exit Game")) {
-        m_pScreens->popScreen();
+    if (m_isPasued) {
+        if (imguiBeginMenu("P A U S E   M E N U")) {
+            if (ImGui::Button("Resume Game")) {
+                m_isPasued = false;
+            }
+            if (ImGui::Button("Exit Game")) {
+                m_pScreens->popScreen();
+            }
+        }
+        ImGui::End();
     }
-    ImGui::End();
 }
 
 void ScreenGame::onUpdate(const sf::Time& dt)
