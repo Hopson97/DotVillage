@@ -7,40 +7,74 @@
 using directoryItr = std::filesystem::recursive_directory_iterator;
 
 namespace {
+    void loadBuildingCosts(Building& building, std::ifstream& inFile)
+    {
+        std::string key;
+        while (key != "end") {
+            inFile >> key;
+            if (key == "coins")
+                inFile >> building.costCoins;
+            if (key == "wood")
+                inFile >> building.costWood;
+            if (key == "food")
+                inFile >> building.costFood;
+            if (key == "stone")
+                inFile >> building.costStone;
+            if (key == "metal")
+                inFile >> building.costMetal;
+            if (key == "metal")
+                inFile >> building.costJobs;
+        }
+    }
+
     Building loadBuilding(const std::filesystem::path& path)
     {
-        std::ifstream infile(path);
+        std::ifstream inFile(path);
         Building building;
         std::string key;
 
         building.texture.loadFromFile("Data/Textures/" + path.filename().string() +
                                       ".png");
 
-        while (infile >> key) {
+        // clang-format off
+        while (inFile >> key) {
             if (key == "cost") {
-                infile >> key >> building.costCoins;
-                infile >> key >> building.costWood;
-                infile >> key >> building.costFood;
-                infile >> key >> building.costStone;
-                infile >> key >> building.costMetal;
-                infile >> key >> building.costJobs;
+                while(key != "end") {
+                    std::cout << key << "\n";
+                    inFile >> key;
+                    if (key == "coins") inFile >> building.costCoins;
+                    else if (key == "wood")  inFile >> building.costWood;
+                    else if (key == "food")  inFile >> building.costFood;
+                    else if (key == "stone") inFile >> building.costStone;
+                    else if (key == "metal") inFile >> building.costMetal;
+                    else if (key == "jobs") inFile >> building.costJobs;
+                }
             }
             else if (key == "rates") {
-                infile >> key >> building.rateCoins;
-                infile >> key >> building.rateWood;
-                infile >> key >> building.rateFood;
-                infile >> key >> building.rateStone;
-                infile >> key >> building.rateMetal;
+                while(key != "end") {
+                    inFile >> key;
+                    if (key == "coins") inFile >> building.rateCoins;
+                    else if (key == "wood")  inFile >> building.rateWood;
+                    else if (key == "food")  inFile >> building.rateFood;
+                    else if (key == "stone") inFile >> building.rateStone;
+                    else if (key == "metal") inFile >> building.rateMetal;
+                }
             }
             else if (key == "onbuild") {
-                infile >> key >> building.onBuildPop;
+                while(key != "end") {
+                    inFile >> key;
+                    if (key == "population") inFile >> building.onBuildPop;
+                }
             }
             else if (key == "meta") {
-                infile >> key >> building.width >> building.height;
-                infile >> key >> building.name;
-                infile >> key;
-                std::getline(infile, building.description);
+                while(key != "end") {
+                    inFile >> key;
+                    if (key == "size") inFile >> building.width >> building.height;
+                    if (key == "name") inFile >> building.name;
+                    if (key == "desc") std::getline(inFile, building.description);
+                }
             }
+            // clang-format on
         }
         std::cout << building.costCoins << " " << building.costWood << " "
                   << building.costFood << " " << building.costStone << " "

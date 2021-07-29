@@ -5,6 +5,7 @@ food 25
 stone 0
 metal 0
 jobs 0
+end 
 
 rates
 coins 5
@@ -12,12 +13,14 @@ wood 0
 food -5
 stone 0
 metal 0
+end
 
 onbuild
 population 2
+end
 
 meta
 size 32 32
 name Hut
 desc Simple housing unit for 2 people
-
+end
