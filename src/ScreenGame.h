@@ -15,6 +15,7 @@ class ScreenGame final : public Screen {
 
   private:
     bool isBuildingSelected() const;
+    bool canAfford(int buildingId);
     void tryPlaceBuilding(float x, float y);
 
     sf::RectangleShape m_backgroundRect;

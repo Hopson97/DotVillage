@@ -167,7 +167,11 @@ void ScreenGame::onRender(sf::RenderWindow* window)
         m_sprite.setSize({building->width, building->height});
         m_sprite.setTexture(&building->texture);
         m_sprite.setPosition(m_mouseX, m_mouseY);
+        if (!canAfford(m_selectedBuilding)) {
+            m_sprite.setFillColor(sf::Color::Red);
+        }
         window->draw(m_sprite);
+        m_sprite.setFillColor(sf::Color::White);
     }
 
     for (const PlacedBuilding& placedBuilding : m_buildings) {
@@ -179,56 +183,44 @@ void ScreenGame::onRender(sf::RenderWindow* window)
     }
 }
 
+bool ScreenGame::canAfford(int buildingId)
+{
+    const Building* blueprint = &m_buildingBlueprints[buildingId];
+    return m_coins >= blueprint->costCoins && m_unemployed >= blueprint->costJobs &&
+           m_food >= blueprint->costFood && m_stone >= blueprint->costStone &&
+           m_metal >= blueprint->costMetal;
+}
+
 bool ScreenGame::isBuildingSelected() const { return m_selectedBuilding > -1; }
 
 void ScreenGame::tryPlaceBuilding(float x, float y)
 {
-    const Building* blueprint = &m_buildingBlueprints[m_selectedBuilding];
+    if (canAfford(m_selectedBuilding)) {
+        const Building* blueprint = &m_buildingBlueprints[m_selectedBuilding];
 
-    PlacedBuilding building;
-    building.id = m_selectedBuilding;
-    building.bounds.width = blueprint->width;
-    building.bounds.height = blueprint->height;
-    building.bounds.left = x;
-    building.bounds.top = y;
+        PlacedBuilding building;
+        building.id = m_selectedBuilding;
+        building.bounds.width = blueprint->width;
+        building.bounds.height = blueprint->height;
+        building.bounds.left = x;
+        building.bounds.top = y;
 
-    std::cout << "blueprint->costCoins " << blueprint->costCoins << "\n"
-              << "blueprint->costFood  " << blueprint->costFood << "\n"
-              << "blueprint->costWood  " << blueprint->costWood << "\n"
-              << "blueprint->costStone " << blueprint->costStone << "\n"
-              << "blueprint->costMetal " << blueprint->costMetal << "\n"
-              << "blueprint->onBuildPop" << blueprint->onBuildPop << "\n\n";
+        m_coins -= blueprint->costCoins;
+        m_food -= blueprint->costFood;
+        m_wood -= blueprint->costWood;
+        m_stone -= blueprint->costStone;
+        m_metal -= blueprint->costMetal;
+        m_unemployed -= blueprint->costJobs;
 
-    std::cout << "m_coins" << m_coins << "\n"
-              << "m_food" << m_food << "\n"
-              << "m_wood" << m_wood << "\n"
-              << "m_stone" << m_stone << "\n"
-              << "m_metal" << m_metal << "\n"
-              << "m_population" << m_population << "\n\n";
+        m_population += blueprint->onBuildPop;
+        m_unemployed += blueprint->onBuildPop;
 
-    m_coins -= blueprint->costCoins;
-    m_food -= blueprint->costFood;
-    m_wood -= blueprint->costWood;
-    m_stone -= blueprint->costStone;
-    m_metal -= blueprint->costMetal;
+        m_dailyCoins += blueprint->rateCoins;
+        m_dailyFood += blueprint->rateFood;
+        m_dailyWood += blueprint->rateWood;
+        m_dailyStone += blueprint->rateStone;
+        m_dailyMetal += blueprint->rateMetal;
 
-    m_population += blueprint->onBuildPop;
-    m_unemployed += blueprint->onBuildPop;
-
-    m_unemployed -= blueprint->costJobs;
-
-    m_dailyCoins += blueprint->rateCoins;
-    m_dailyFood += blueprint->rateFood;
-    m_dailyWood += blueprint->rateWood;
-    m_dailyStone += blueprint->rateStone;
-    m_dailyMetal += blueprint->rateMetal;
-
-    std::cout << "m_coins" << m_coins << "\n"
-              << "m_food" << m_food << "\n"
-              << "m_wood" << m_wood << "\n"
-              << "m_stone" << m_stone << "\n"
-              << "m_metal" << m_metal << "\n"
-              << "m_population" << m_population << "\n\n";
-
-    m_buildings.push_back(building);
+        m_buildings.push_back(building);
+    }
 }
