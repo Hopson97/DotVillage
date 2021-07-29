@@ -27,5 +27,5 @@ bool imguiGameMenuBegin(const char* name)
     ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
     ImGui::SetNextWindowPos({0, WIN_HEIGHT - 128}, ImGuiCond_Always);
     return ImGui::Begin(name, nullptr,
-                        ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
+                        ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar);
 }
