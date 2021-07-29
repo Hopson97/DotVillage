@@ -22,6 +22,8 @@ class ScreenGame final : public Screen {
     sf::Texture m_backgroundTexture;
     sf::Image m_backgroundImage;
 
+    sf::Clock m_dailyTimer;
+
     sf::RectangleShape m_sprite;
 
     std::vector<Building> m_buildingBlueprints;

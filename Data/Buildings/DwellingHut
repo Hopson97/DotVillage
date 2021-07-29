@@ -1,26 +1,26 @@
 cost 
-coins 50
-wood 50
-food 25
+coins 20
+wood 20
+food 5
 stone 0
 metal 0
 jobs 0
 end 
 
 rates
-coins 5
+coins 10
 wood 0
-food -5
+food -4
 stone 0
 metal 0
 end
 
 onbuild
-population 2
+population 4
 end
 
 meta
-size 32 32
+size 20 20
 name Hut
-desc Simple housing unit for 2 people
+desc Simple housing unit for a small family
 end

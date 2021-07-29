@@ -156,7 +156,17 @@ void ScreenGame::onGUI()
     }
 }
 
-void ScreenGame::onUpdate(const sf::Time& dt) {}
+void ScreenGame::onUpdate(const sf::Time& dt) {
+    if (m_dailyTimer.getElapsedTime() > sf::seconds(5)) {
+        m_coins += m_dailyCoins;
+        m_wood += m_dailyWood ;
+        m_food += m_dailyFood ;
+        m_stone += m_dailyStone;
+        m_metal += m_dailyMetal;
+
+        m_dailyTimer.restart();
+    }
+}
 
 void ScreenGame::onRender(sf::RenderWindow* window)
 {
@@ -188,14 +198,15 @@ bool ScreenGame::canAfford(int buildingId)
     const Building* blueprint = &m_buildingBlueprints[buildingId];
     return m_coins >= blueprint->costCoins && m_unemployed >= blueprint->costJobs &&
            m_food >= blueprint->costFood && m_stone >= blueprint->costStone &&
-           m_metal >= blueprint->costMetal;
+           m_metal >= blueprint->costMetal &&
+           m_wood >= blueprint->costWood;
 }
 
 bool ScreenGame::isBuildingSelected() const { return m_selectedBuilding > -1; }
 
 void ScreenGame::tryPlaceBuilding(float x, float y)
 {
-    if (canAfford(m_selectedBuilding)) {
+    if (canAfford(m_selectedBuilding) && y > 200) {
         const Building* blueprint = &m_buildingBlueprints[m_selectedBuilding];
 
         PlacedBuilding building;
