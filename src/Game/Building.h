@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <string>
 #include <vector>
 
@@ -27,6 +28,11 @@ struct Building {
     float height = 0;
 
     sf::Texture texture;
+};
+
+struct PlacedBuilding {
+    int id;
+    sf::FloatRect bounds;
 };
 
 std::vector<Building> loadBuildings();

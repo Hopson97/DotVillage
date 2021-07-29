@@ -7,26 +7,6 @@
 using directoryItr = std::filesystem::recursive_directory_iterator;
 
 namespace {
-    void loadBuildingCosts(Building& building, std::ifstream& inFile)
-    {
-        std::string key;
-        while (key != "end") {
-            inFile >> key;
-            if (key == "coins")
-                inFile >> building.costCoins;
-            if (key == "wood")
-                inFile >> building.costWood;
-            if (key == "food")
-                inFile >> building.costFood;
-            if (key == "stone")
-                inFile >> building.costStone;
-            if (key == "metal")
-                inFile >> building.costMetal;
-            if (key == "metal")
-                inFile >> building.costJobs;
-        }
-    }
-
     Building loadBuilding(const std::filesystem::path& path)
     {
         std::ifstream inFile(path);

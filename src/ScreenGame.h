@@ -14,6 +14,9 @@ class ScreenGame final : public Screen {
     void onRender(sf::RenderWindow* window) override;
 
   private:
+    bool isBuildingSelected() const;
+    void tryPlaceBuilding(float x, float y);
+
     sf::RectangleShape m_backgroundRect;
     sf::Texture m_backgroundTexture;
     sf::Image m_backgroundImage;
@@ -21,6 +24,19 @@ class ScreenGame final : public Screen {
     sf::RectangleShape m_sprite;
 
     std::vector<Building> m_buildingBlueprints;
+    std::vector<PlacedBuilding> m_buildings;
+
+    sf::Texture m_texResCoin;
+    sf::Texture m_texResMetal;
+    sf::Texture m_texResPopulation;
+    sf::Texture m_texResStone;
+    sf::Texture m_texResUnemployed;
+    sf::Texture m_texResWood;
+    sf::Texture m_texResFood;
+
+    float m_mouseX = 0;
+    float m_mouseY = 0;
+    int m_selectedBuilding = -1;
 
     bool m_isPasued = false;
 
@@ -32,4 +48,10 @@ class ScreenGame final : public Screen {
     int m_wood = 100;
     int m_stone = 100;
     int m_metal = 100;
+
+    int m_dailyCoins = 0;
+    int m_dailyWood = 0;
+    int m_dailyFood = 0;
+    int m_dailyStone = 0;
+    int m_dailyMetal = 0;
 };
