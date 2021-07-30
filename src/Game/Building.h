@@ -5,13 +5,7 @@
 #include <string>
 #include <vector>
 
-enum class BuildingType {
-    Dwelling,
-    Food,
-    Wood,
-    Stone,
-    Metal
-};
+enum class BuildingType { Dwelling, Food, Wood, Stone, Metal };
 
 struct Building {
     std::string name;

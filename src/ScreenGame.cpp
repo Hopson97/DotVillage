@@ -24,6 +24,8 @@ ScreenGame::ScreenGame(ScreenManager* stack)
     m_texResUnemployed.loadFromFile("Data/Textures/ResUnemployed.png");
     m_texResWood.loadFromFile("Data/Textures/ResWood.png");
     m_texResFood.loadFromFile("Data/Textures/ResFood.png");
+
+    m_dot.setRadius(5);
 }
 
 void ScreenGame::onEvent(const sf::Event& e)
@@ -70,7 +72,6 @@ void drawResourceLine(const sf::Texture& texture, int value, const char* tooltip
 
 void ScreenGame::onGUI()
 {
-    ImGui::ShowDemoWindow();
     if (m_isPasued) {
         if (imguiBeginMenu("P A U S E   M E N U")) {
             if (imguiButtonCustom("Resume Game")) {
@@ -131,7 +132,7 @@ void ScreenGame::onGUI()
                              ImGuiWindowFlags_AlwaysAutoResize)) {
                 ImGui::ImageButton(building->texture,
                                    sf::Vector2f{building->width, building->height});
-                ImGui::Text(building->description.c_str());
+                ImGui::Text("%s", building->description.c_str());
                 ImGui::Separator();
 
                 // clang-format off
@@ -175,11 +176,81 @@ void ScreenGame::onUpdate(const sf::Time& dt)
 
         m_dailyTimer.restart();
     }
+
+    for (auto& dot : m_dots) {
+        const PlacedBuilding* home = &m_buildings[dot.house];
+        const PlacedBuilding* work = &m_buildings[dot.occupaction];
+        const Building* homebp = &m_buildingBlueprints[home->id];
+        const Building* workbp = &m_buildingBlueprints[work->id];
+
+        switch (dot.state) {
+            case DotState::Home:
+                if (dot.timer.getElapsedTime().asSeconds() > dot.nextAction && dot.occupaction > -1) {
+                    dot.timer.restart();
+                    dot.state = DotState::Walking;
+
+                    dot.location.x = home->bounds.left + homebp->width / 2;
+                    dot.location.y = home->bounds.top + homebp->height / 2;
+
+                    dot.target.x = work->bounds.left + workbp->width / 2;
+                    dot.target.y = work->bounds.top + workbp->height / 2;
+                    dot.targetId = dot.occupaction;
+                }
+                break;
+
+            case DotState::Work:
+                if (dot.timer.getElapsedTime().asSeconds() > dot.nextAction) {
+                    dot.timer.restart();
+                    dot.state = DotState::Walking;
+
+                    dot.target.x = home->bounds.left + homebp->width / 2;
+                    dot.target.y = home->bounds.top + homebp->height / 2;
+
+                    dot.location.x = work->bounds.left + workbp->width / 2;
+                    dot.location.y = work->bounds.top + workbp->height / 2;
+                    dot.targetId = dot.house;
+                }
+                break;
+
+            case DotState::Walking: {
+                sf::Vector2f delta = dot.location - dot.target;
+
+                float length = std::sqrt(delta.x * delta.x + delta.y * delta.y);
+                sf::Vector2f speed = {delta.x / length, delta.y / length};
+                dot.location -= speed * dt.asSeconds() * dot.speed;
+
+                if (dot.targetId == dot.house && length < homebp->width / 4) {
+                    dot.state = DotState::Home;
+                }
+                else if (dot.targetId == dot.occupaction && length < workbp->width / 4) {
+                    dot.state = DotState::Work;
+                }
+            }
+
+            break;
+        }
+    }
 }
 
 void ScreenGame::onRender(sf::RenderWindow* window)
 {
     window->draw(m_backgroundRect);
+
+    for (const Dot& dot : m_dots) {
+        if (dot.state == DotState::Walking) {
+            m_dot.setPosition(dot.location);
+            m_dot.setRadius(dot.size);
+            window->draw(m_dot);
+        }
+    }
+
+    for (const PlacedBuilding& placedBuilding : m_buildings) {
+        const Building* building = &m_buildingBlueprints[placedBuilding.id];
+        m_sprite.setSize({building->width, building->height});
+        m_sprite.setTexture(&building->texture, true);
+        m_sprite.setPosition(placedBuilding.bounds.left, placedBuilding.bounds.top);
+        window->draw(m_sprite);
+    }
 
     if (isBuildingSelected()) {
         const Building* building = &m_buildingBlueprints[m_selectedBuilding];
@@ -191,14 +262,6 @@ void ScreenGame::onRender(sf::RenderWindow* window)
         }
         window->draw(m_sprite);
         m_sprite.setFillColor(sf::Color::White);
-    }
-
-    for (const PlacedBuilding& placedBuilding : m_buildings) {
-        const Building* building = &m_buildingBlueprints[placedBuilding.id];
-        m_sprite.setSize({building->width, building->height});
-        m_sprite.setTexture(&building->texture, true);
-        m_sprite.setPosition(placedBuilding.bounds.left, placedBuilding.bounds.top);
-        window->draw(m_sprite);
     }
 }
 
@@ -241,5 +304,20 @@ void ScreenGame::tryPlaceBuilding(float x, float y)
         m_dailyMetal += blueprint->rateMetal;
 
         m_buildings.push_back(building);
+        int id = m_buildings.size() - 1;
+
+        if (blueprint->type == BuildingType::Dwelling) {
+            auto newDots = makeDots(blueprint->onBuildPop, id);
+            m_dots.insert(m_dots.end(), newDots.begin(), newDots.end());
+        }
+        else {
+            int jobs = blueprint->costJobs;
+            for (Dot& dot : m_dots) {
+                if (dot.occupaction == -1 && jobs > 0) {
+                    dot.occupaction = id;
+                    jobs--;
+                }
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Game/Building.h"
+#include "Game/Dot.h"
 #include "Screen.h"
 
 class ScreenGame final : public Screen {
@@ -25,9 +26,11 @@ class ScreenGame final : public Screen {
     sf::Clock m_dailyTimer;
 
     sf::RectangleShape m_sprite;
+    sf::CircleShape m_dot;
 
     std::vector<Building> m_buildingBlueprints;
     std::vector<PlacedBuilding> m_buildings;
+    std::vector<Dot> m_dots;
 
     sf::Texture m_texResCoin;
     sf::Texture m_texResMetal;

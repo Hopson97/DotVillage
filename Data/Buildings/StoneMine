@@ -1,0 +1,27 @@
+cost 
+coins 30
+wood 10
+food 0
+stone 0
+metal 0
+jobs 5
+end 
+
+rates
+coins -15
+wood 0
+food -3
+stone 0
+metal 10
+end
+
+onbuild
+population 0
+end
+
+meta
+size 30 30
+name Stone Mine
+desc A small mine to obtain stone
+type metal
+end

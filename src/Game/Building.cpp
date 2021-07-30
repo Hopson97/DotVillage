@@ -89,7 +89,7 @@ std::vector<Building> loadBuildings()
         bool inserted = false;
         for (auto itr = buildings.begin(); itr != buildings.end();) {
             auto b = &*itr;
-            if(b->type == building.type) {
+            if (b->type == building.type) {
                 buildings.insert(itr, building);
                 inserted = true;
                 break;
@@ -99,8 +99,7 @@ std::vector<Building> loadBuildings()
             }
         }
         if (!inserted) {
-         buildings.push_back(loadBuilding(dirEntry));
-
+            buildings.push_back(loadBuilding(dirEntry));
         }
     }
     return buildings;
