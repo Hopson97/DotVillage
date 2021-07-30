@@ -1,7 +1,12 @@
 # DotVillage
 
-## Building and Running
+Mini city building game based on the Scratch game by BIG-RED-BUTTON
 
+Original: https://scratch.mit.edu/projects/2269094/
+
+Gif:
+
+![](Data/README/gif.gif)
 ## Building and Running
 
 ### Linux
