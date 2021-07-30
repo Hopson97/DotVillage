@@ -5,9 +5,18 @@
 #include <string>
 #include <vector>
 
+enum class BuildingType {
+    Dwelling,
+    Food,
+    Wood,
+    Stone,
+    Metal
+};
+
 struct Building {
     std::string name;
     std::string description;
+    BuildingType type;
 
     int costCoins = 0;
     int costWood = 0;

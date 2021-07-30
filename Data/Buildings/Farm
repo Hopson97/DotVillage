@@ -20,7 +20,8 @@ population 0
 end
 
 meta
-size 20 20
+size 40 40
 name Farm
 desc A small farm to feed a few families
+type food
 end

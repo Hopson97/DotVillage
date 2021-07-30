@@ -23,4 +23,5 @@ meta
 size 20 20
 name Hut
 desc Simple housing unit for a small family
+type dwelling
 end

@@ -1,0 +1,27 @@
+cost 
+coins 70
+wood 50
+food 10
+stone 15
+metal 15
+jobs 0
+end 
+
+rates
+coins 20
+wood 0
+food -10
+stone 0
+metal 0
+end
+
+onbuild
+population 8
+end
+
+meta
+size 40 40
+name House
+desc Simple housing unit for a medium family
+type dwelling
+end

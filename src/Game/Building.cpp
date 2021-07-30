@@ -52,6 +52,15 @@ namespace {
                     if (key == "size") inFile >> building.width >> building.height;
                     if (key == "name") inFile >> building.name;
                     if (key == "desc") std::getline(inFile, building.description);
+
+                    if (key == "type") {
+                        inFile >> key;
+                        if (key == "dwelling") building.type = BuildingType::Dwelling;
+                        if (key == "food") building.type = BuildingType::Food;
+                        if (key == "wood") building.type = BuildingType::Wood;
+                        if (key == "stone") building.type = BuildingType::Stone;
+                        if (key == "metal") building.type = BuildingType::Metal;
+                    }
                 }
             }
             // clang-format on
@@ -76,7 +85,23 @@ std::vector<Building> loadBuildings()
 {
     std::vector<Building> buildings;
     for (const auto& dirEntry : directoryItr("Data/Buildings")) {
-        buildings.push_back(loadBuilding(dirEntry));
+        auto building = loadBuilding(dirEntry);
+        bool inserted = false;
+        for (auto itr = buildings.begin(); itr != buildings.end();) {
+            auto b = &*itr;
+            if(b->type == building.type) {
+                buildings.insert(itr, building);
+                inserted = true;
+                break;
+            }
+            else {
+                itr++;
+            }
+        }
+        if (!inserted) {
+         buildings.push_back(loadBuilding(dirEntry));
+
+        }
     }
     return buildings;
 }

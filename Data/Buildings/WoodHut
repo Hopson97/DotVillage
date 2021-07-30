@@ -20,7 +20,8 @@ population 0
 end
 
 meta
-size 20 20
+size 30 30
 name Wood Hut
 desc A small managed forest
+type wood
 end

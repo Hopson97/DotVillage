@@ -109,9 +109,11 @@ void ScreenGame::onGUI()
             drawResourceLine(m_texResMetal, m_metal, "Daily Metal Rate");
             ImGui::NextColumn();
 
-            ImGui::Text("Buildings");
             int buildingPtr = 0;
             for (const Building& building : m_buildingBlueprints) {
+                if (ImGui::GetCursorScreenPos().y + building.height > WIN_HEIGHT) {
+                    ImGui::NextColumn();
+                }
                 if (ImGui::ImageButton(building.texture,
                                        sf::Vector2f{building.width, building.height})) {
                     m_selectedBuilding = buildingPtr;
@@ -124,43 +126,50 @@ void ScreenGame::onGUI()
         }
         ImGui::End();
 
-        if (hoveredBuilding) {
-            if (ImGui::Begin(hoveredBuilding->name.c_str(), nullptr,
+        auto drawCosts = [&](const Building* building) {
+            if (ImGui::Begin(building->name.c_str(), nullptr,
                              ImGuiWindowFlags_AlwaysAutoResize)) {
-                ImGui::ImageButton(
-                    hoveredBuilding->texture,
-                    sf::Vector2f{hoveredBuilding->width, hoveredBuilding->height});
-                ImGui::Text(hoveredBuilding->description.c_str());
+                ImGui::ImageButton(building->texture,
+                                   sf::Vector2f{building->width, building->height});
+                ImGui::Text(building->description.c_str());
                 ImGui::Separator();
 
                 // clang-format off
                 ImGui::Text("Cost");
-                drawResourceLine(m_texResCoin, hoveredBuilding->costCoins,"Coins");
-                drawResourceLine(m_texResFood, hoveredBuilding->costFood,"Food");
-                drawResourceLine(m_texResWood,hoveredBuilding->costWood, "Wood");
-                drawResourceLine(m_texResStone, hoveredBuilding->costStone, "Stone");
-                drawResourceLine(m_texResMetal, hoveredBuilding->costMetal, "Metal");
-                drawResourceLine(m_texResUnemployed, hoveredBuilding->costJobs, "Unemployed Needed");
+                drawResourceLine(m_texResCoin, building->costCoins,"Coins");
+                drawResourceLine(m_texResFood, building->costFood,"Food");
+                drawResourceLine(m_texResWood,building->costWood, "Wood");
+                drawResourceLine(m_texResStone, building->costStone, "Stone");
+                drawResourceLine(m_texResMetal, building->costMetal, "Metal");
+                drawResourceLine(m_texResUnemployed, building->costJobs, "Unemployed Needed");
 
                 ImGui::Separator();
                 ImGui::Text("Daily Rate");
-                drawResourceLine(m_texResCoin, hoveredBuilding->rateCoins, "Tax");
-                drawResourceLine(m_texResFood, hoveredBuilding->rateFood, "Daily Food Rate");
-                drawResourceLine(m_texResWood, hoveredBuilding->rateWood, "Daily Wood Rate");
-                drawResourceLine(m_texResStone, hoveredBuilding->rateStone, "Daily Stone Rate");
-                drawResourceLine(m_texResMetal, hoveredBuilding->rateMetal, "Daily Metal Rate");
+                drawResourceLine(m_texResCoin, building->rateCoins, "Tax");
+                drawResourceLine(m_texResFood, building->rateFood, "Daily Food Rate");
+                drawResourceLine(m_texResWood, building->rateWood, "Daily Wood Rate");
+                drawResourceLine(m_texResStone, building->rateStone, "Daily Stone Rate");
+                drawResourceLine(m_texResMetal, building->rateMetal, "Daily Metal Rate");
                 // clang-format on
                 ImGui::End();
             }
+        };
+
+        if (hoveredBuilding) {
+            drawCosts(hoveredBuilding);
+        }
+        else if (isBuildingSelected()) {
+            drawCosts(&m_buildingBlueprints[m_selectedBuilding]);
         }
     }
 }
 
-void ScreenGame::onUpdate(const sf::Time& dt) {
+void ScreenGame::onUpdate(const sf::Time& dt)
+{
     if (m_dailyTimer.getElapsedTime() > sf::seconds(5)) {
         m_coins += m_dailyCoins;
-        m_wood += m_dailyWood ;
-        m_food += m_dailyFood ;
+        m_wood += m_dailyWood;
+        m_food += m_dailyFood;
         m_stone += m_dailyStone;
         m_metal += m_dailyMetal;
 
@@ -175,7 +184,7 @@ void ScreenGame::onRender(sf::RenderWindow* window)
     if (isBuildingSelected()) {
         const Building* building = &m_buildingBlueprints[m_selectedBuilding];
         m_sprite.setSize({building->width, building->height});
-        m_sprite.setTexture(&building->texture);
+        m_sprite.setTexture(&building->texture, true);
         m_sprite.setPosition(m_mouseX, m_mouseY);
         if (!canAfford(m_selectedBuilding)) {
             m_sprite.setFillColor(sf::Color::Red);
@@ -187,7 +196,7 @@ void ScreenGame::onRender(sf::RenderWindow* window)
     for (const PlacedBuilding& placedBuilding : m_buildings) {
         const Building* building = &m_buildingBlueprints[placedBuilding.id];
         m_sprite.setSize({building->width, building->height});
-        m_sprite.setTexture(&building->texture);
+        m_sprite.setTexture(&building->texture, true);
         m_sprite.setPosition(placedBuilding.bounds.left, placedBuilding.bounds.top);
         window->draw(m_sprite);
     }
@@ -198,15 +207,14 @@ bool ScreenGame::canAfford(int buildingId)
     const Building* blueprint = &m_buildingBlueprints[buildingId];
     return m_coins >= blueprint->costCoins && m_unemployed >= blueprint->costJobs &&
            m_food >= blueprint->costFood && m_stone >= blueprint->costStone &&
-           m_metal >= blueprint->costMetal &&
-           m_wood >= blueprint->costWood;
+           m_metal >= blueprint->costMetal && m_wood >= blueprint->costWood;
 }
 
 bool ScreenGame::isBuildingSelected() const { return m_selectedBuilding > -1; }
 
 void ScreenGame::tryPlaceBuilding(float x, float y)
 {
-    if (canAfford(m_selectedBuilding) && y > 200) {
+    if (canAfford(m_selectedBuilding) && y < WIN_HEIGHT - 200) {
         const Building* blueprint = &m_buildingBlueprints[m_selectedBuilding];
 
         PlacedBuilding building;
